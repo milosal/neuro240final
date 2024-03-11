@@ -37,7 +37,7 @@ hidden_layers = [64, 256, 256, 64]
 output_size = 1
 model = SimpleNN(input_size, hidden_layers, output_size)
 
-criterion = nn.MSELoss()
+criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
 # This is the loop to train the model
