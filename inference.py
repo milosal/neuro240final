@@ -6,7 +6,7 @@ from dfunction import D
 import matplotlib.pyplot as plt
 import random
 
-hidden_layers = [8, 16, 8]
+hidden_layers = [16, 32, 16]
 
 class ResidualBlock(nn.Module):
     def __init__(self, input_size, output_size, dropout_probability=0.5):

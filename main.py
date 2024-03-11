@@ -5,13 +5,19 @@ import torch.nn.functional as F
 from hfunction import H
 from dfunction import D
 import matplotlib.pyplot as plt
+import random
 
-LR = 0.005
+LR = 0.01
 
 START_TRAIN = 1
 END_TRAIN = 10000
 START_TEST = 10001
-END_TEST = 12000
+END_TEST = 10500
+
+START_TRAIN_DRAW = 1
+END_TRAIN_DRAW = 1000
+START_TEST_DRAW = 1001
+END_TEST_DRAW = 1200
 
 EPOCHS = 200
 PRINT_EVERY = 5
@@ -67,8 +73,22 @@ def generate_data(n):
     output = torch.tensor([H(n)], dtype=torch.float32)
     return input, output
 
+def generate_train_data():
+    curr_train_data = []
+    for i in range(START_TRAIN, END_TRAIN + 1):
+        n = random.randint(START_TRAIN_DRAW, END_TRAIN_DRAW)
+        curr_train_data.append((generate_data(n)))
+    return curr_train_data
+
+def generate_test_data():
+    curr_test_data = []
+    for i in range(START_TEST, END_TEST + 1):
+        n = random.randint(START_TEST_DRAW, END_TEST_DRAW)
+        curr_test_data.append((generate_data(n)))
+    return curr_test_data
+
 input_size = 1
-hidden_layers = [8, 16, 8]
+hidden_layers = [16, 32, 16]
 output_size = 1
 model = EnhancedNN(input_size, hidden_layers, output_size, dropout_probability=0.5)
 
@@ -81,8 +101,9 @@ test_losses = []
 train_losses = []
 for epoch in range(epochs):
     total_loss = 0
-    for n in range(START_TRAIN, END_TRAIN + 1):  
-        input, true_output = generate_data(n)
+    curr_train_data = generate_train_data()
+    for n in range(END_TRAIN - START_TRAIN + 1):  
+        input, true_output = curr_train_data[n]
         optimizer.zero_grad()
         predicted_output = model(input)
         loss = criterion(predicted_output, true_output)
@@ -93,8 +114,9 @@ for epoch in range(epochs):
     # Test the model every epoch!
     with torch.no_grad():
         test_loss = 0
-        for n in range(START_TEST, END_TEST + 1): 
-            input, true_output = generate_data(n)
+        curr_test_data = generate_test_data()
+        for n in range(END_TEST - START_TEST + 1): 
+            input, true_output = curr_test_data[n]
             predicted_output = model(input)
             loss = criterion(predicted_output, true_output)
             test_loss += loss.item()
