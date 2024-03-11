@@ -5,13 +5,15 @@ from hfunction import H
 from dfunction import D
 import matplotlib.pyplot as plt
 
+LR = 0.005
+
 START_TRAIN = 1
 END_TRAIN = 10000
 START_TEST = 10001
 END_TEST = 12000
 
-EPOCHS = 40
-PRINT_EVERY = 4
+EPOCHS = 25
+PRINT_EVERY = 5
 
 class SimpleNN(nn.Module):
     def __init__(self, input_size, hidden_layers, output_size):
@@ -38,7 +40,7 @@ output_size = 1
 model = SimpleNN(input_size, hidden_layers, output_size)
 
 criterion = nn.MSELoss()
-optimizer = optim.Adam(model.parameters(), lr=0.001)
+optimizer = optim.Adam(model.parameters(), lr=LR)
 
 # This is the loop to train the model
 epochs = EPOCHS
@@ -68,8 +70,8 @@ for epoch in range(epochs):
         print(f"Epoch {epoch}, Train Loss: {total_loss / (END_TRAIN - START_TRAIN + 1)}")
         print(f"Test Loss: {test_loss / (END_TEST - START_TEST + 1)}")
 
-save_file_name = f"model_{len(hidden_layers)}_{EPOCHS}.pth"
-torch.save(model, save_file_name)
+save_file_name = f"models/model_{len(hidden_layers)}_{EPOCHS}.pth"
+torch.save(model.state_dict(), save_file_name)
 
 plt.figure(figsize=(10, 6))
 plt.plot(range(epochs), train_losses, label='Training Loss')
