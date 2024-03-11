@@ -29,7 +29,7 @@ class SimpleNN(nn.Module):
 
 def generate_data(n):
     input = torch.tensor([n], dtype=torch.float32)
-    output = torch.tensor([D(n)], dtype=torch.float32)
+    output = torch.tensor([H(n)], dtype=torch.float32)
     return input, output
 
 input_size = 1
