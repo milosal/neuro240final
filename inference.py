@@ -5,7 +5,22 @@ from hfunction import H
 from dfunction import D
 import matplotlib.pyplot as plt
 
-model = torch.load("model_4_40.pth")
+
+class SimpleNN(nn.Module):
+    def __init__(self, input_size, hidden_layers, output_size):
+        super(SimpleNN, self).__init__()
+        layers = [nn.Linear(input_size, hidden_layers[0]), nn.ReLU()]
+        for i in range(len(hidden_layers)-1):
+            layers.append(nn.Linear(hidden_layers[i], hidden_layers[i+1]))
+            layers.append(nn.ReLU())
+        layers.append(nn.Linear(hidden_layers[-1], output_size))
+        self.net = nn.Sequential(*layers)
+        
+    def forward(self, x):
+        return self.net(x)
+
+model = SimpleNN(1, [64, 256, 256, 64], 1)
+model.load_state_dict(torch.load('models/model_4_100.pth'))
 model.eval()
 
 n = 150

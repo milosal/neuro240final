@@ -5,12 +5,14 @@ from hfunction import H
 from dfunction import D
 import matplotlib.pyplot as plt
 
+LR = 0.01
+
 START_TRAIN = 1
 END_TRAIN = 10000
 START_TEST = 10001
 END_TEST = 12000
 
-EPOCHS = 40
+EPOCHS = 100
 PRINT_EVERY = 4
 
 class SimpleNN(nn.Module):
@@ -37,8 +39,8 @@ hidden_layers = [64, 256, 256, 64]
 output_size = 1
 model = SimpleNN(input_size, hidden_layers, output_size)
 
-criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=0.001)
+criterion = nn.MSELoss()
+optimizer = optim.AdamW(model.parameters(), lr=LR)
 
 # This is the loop to train the model
 epochs = EPOCHS
@@ -50,7 +52,7 @@ for epoch in range(epochs):
         input, true_output = generate_data(n)
         optimizer.zero_grad()
         predicted_output = model(input)
-        loss = criterion(predicted_output, true_output)
+        loss = criterion(true_output, predicted_output)
         loss.backward()
         optimizer.step()
         total_loss += loss.item()
@@ -61,15 +63,15 @@ for epoch in range(epochs):
         for n in range(START_TEST, END_TEST + 1): 
             input, true_output = generate_data(n)
             predicted_output = model(input)
-            loss = criterion(predicted_output, true_output)
+            loss = criterion(true_output, predicted_output)
             test_loss += loss.item()
         test_losses.append(test_loss / (END_TEST - START_TEST + 1))
     if epoch % PRINT_EVERY == 0:
         print(f"Epoch {epoch}, Train Loss: {total_loss / (END_TRAIN - START_TRAIN + 1)}")
         print(f"Test Loss: {test_loss / (END_TEST - START_TEST + 1)}")
 
-save_file_name = f"model_{len(hidden_layers)}_{EPOCHS}.pth"
-torch.save(model, save_file_name)
+save_file_name = f"models/model_{len(hidden_layers)}_{EPOCHS}_{LR}.pth"
+torch.save(model.state_dict(), save_file_name)
 
 plt.figure(figsize=(10, 6))
 plt.plot(range(epochs), train_losses, label='Training Loss')
