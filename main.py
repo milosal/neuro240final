@@ -33,7 +33,7 @@ def generate_data(n):
     return input, output
 
 input_size = 1
-hidden_layers = [64, 256, 256, 64]  # Example: two hidden layers with 64 neurons each
+hidden_layers = [64, 256, 256, 64] 
 output_size = 1
 model = SimpleNN(input_size, hidden_layers, output_size)
 
