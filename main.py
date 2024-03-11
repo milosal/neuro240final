@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import torch.nn.functional as F
 from hfunction import H
 from dfunction import D
 import matplotlib.pyplot as plt
@@ -12,22 +13,54 @@ END_TRAIN = 10000
 START_TEST = 10001
 END_TEST = 12000
 
-EPOCHS = 25
+EPOCHS = 200
 PRINT_EVERY = 5
 
-class SimpleNN(nn.Module):
-    def __init__(self, input_size, hidden_layers, output_size):
-        super(SimpleNN, self).__init__()
-        layers = [nn.Linear(input_size, hidden_layers[0]), nn.ReLU()]
-        for i in range(len(hidden_layers)-1):
-            layers.append(nn.Linear(hidden_layers[i], hidden_layers[i+1]))
-            layers.append(nn.ReLU())
-        layers.append(nn.Linear(hidden_layers[-1], output_size))
-        self.net = nn.Sequential(*layers)
-        
-    def forward(self, x):
-        return self.net(x)
+class ResidualBlock(nn.Module):
+    def __init__(self, input_size, output_size, dropout_probability=0.5):
+        super(ResidualBlock, self).__init__()
+        self.linear = nn.Linear(input_size, output_size)
+        self.dropout = nn.Dropout(p=dropout_probability)
+        self.relu = nn.ReLU(inplace=False)  # Ensure ReLU is not in-place
+        # Ensure input_size == output_size for residual connection
+        if input_size != output_size:
+            self.adjust_dimensions = nn.Linear(input_size, output_size)
+        else:
+            self.adjust_dimensions = None
 
+    def forward(self, x):
+        identity = x
+        
+        out = self.linear(x)
+        out = self.dropout(out)
+        out = self.relu(out)
+
+        if self.adjust_dimensions is not None:
+            identity = self.adjust_dimensions(identity)
+
+        out = out + identity  # Ensure this addition isn't marked as in-place
+        out = self.relu(out)  # Make sure ReLU here isn't in-place
+        return out
+
+class EnhancedNN(nn.Module):
+    def __init__(self, input_size, hidden_layers, output_size, dropout_probability=0.5):
+        super(EnhancedNN, self).__init__()
+        self.layers = nn.ModuleList()
+        # Create the first residual block separately to handle input size
+        self.layers.append(ResidualBlock(input_size, hidden_layers[0], dropout_probability))
+
+        # Create subsequent residual blocks based on hidden layers
+        for i in range(1, len(hidden_layers)):
+            self.layers.append(ResidualBlock(hidden_layers[i-1], hidden_layers[i], dropout_probability))
+
+        # Final layer - no dropout here
+        self.final = nn.Linear(hidden_layers[-1], output_size)
+
+    def forward(self, x):
+        for layer in self.layers:
+            x = layer(x)
+        x = self.final(x)
+        return x
 
 def generate_data(n):
     input = torch.tensor([n], dtype=torch.float32)
@@ -35,9 +68,9 @@ def generate_data(n):
     return input, output
 
 input_size = 1
-hidden_layers = [64, 256, 256, 64] 
+hidden_layers = [8, 16, 8]
 output_size = 1
-model = SimpleNN(input_size, hidden_layers, output_size)
+model = EnhancedNN(input_size, hidden_layers, output_size, dropout_probability=0.5)
 
 criterion = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr=LR)
@@ -81,3 +114,10 @@ plt.ylabel('Loss')
 plt.title('Training and Test Loss Over Epochs')
 plt.legend()
 plt.show()
+
+
+# CHANGE DATA TO TAKE RANDOM DRAWS,
+# FIGURE OUT A WAY TO SPLIT THAT WITH TEST
+
+# ALSO TEST THE BEST POST POSSIBLE 'RETURN SAME NUM EVERY TIME'
+# ... VALUE TO SEE IF IT LEARNS ANYTHING BETTER THAN THAT
