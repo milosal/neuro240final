@@ -1,22 +1,15 @@
 import torch
+import math
 
-def H(n):
-    curr = n
-    n_h = 0
-    while curr != 1:
-        if curr % 2 == 0:
-            curr = curr / 2
-        else:
-            curr = 3*curr + 1
-        n_h += 1
-    return n_h
+def pi(n):
+    return math.pi * n
 
-def gen_dataset(n_max, file_path='data/hn_dataset.pt'):
+def gen_dataset(n_max, file_path='data/pi_dataset.pt'):
     data = []
     for n in range(1, n_max + 1):
-        hn = H(n)
-        data.append((n, hn))
+        pn = pi(n)
+        data.append((n, pn))
     torch.save(data, file_path)
 
-n_max = 100000
-gen_dataset(n_max, 'data/hn_dataset.pt')
+n_max = 1000000
+gen_dataset(n_max, 'data/pi_dataset.pt')

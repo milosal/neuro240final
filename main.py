@@ -13,10 +13,10 @@ END_TRAIN = 10000
 START_TEST = 10001
 END_TEST = 12000
 
-EPOCHS = 400
-PRINT_EVERY = 10
+EPOCHS = 40
+PRINT_EVERY = 5
 
-GRAPH_THRESHOLD = 200
+GRAPH_THRESHOLD = 20
 
 class SimpleNN(nn.Module):
     def __init__(self, input_size, hidden_layers, output_size):
@@ -31,17 +31,6 @@ class SimpleNN(nn.Module):
     def forward(self, x):
         return self.net(x)
 
-def H(n):
-    curr = n
-    n_h = 0
-    while curr != 1:
-        if curr % 2 == 0:
-            curr = curr / 2
-        else:
-            curr = 3*curr + 1
-        n_h += 1
-    return n_h
-
 
 class HnDataset(Dataset):
     def __init__(self, file_path):
@@ -54,7 +43,7 @@ class HnDataset(Dataset):
         n, hn = self.data[idx]
         return torch.tensor([n], dtype=torch.float32), torch.tensor([hn], dtype=torch.float32)
 
-def get_dataloaders(batch_size=64, file_path='data/hn_dataset.pt', split_ratio=0.8):
+def get_dataloaders(batch_size=64, file_path='data/pi_dataset.pt', split_ratio=0.8):
     dataset = HnDataset(file_path=file_path)
     train_size = int(len(dataset) * split_ratio)
     test_size = len(dataset) - train_size
@@ -65,16 +54,16 @@ def get_dataloaders(batch_size=64, file_path='data/hn_dataset.pt', split_ratio=0
     
     return train_dataloader, test_dataloader
 
-train_dataloader, test_dataloader = get_dataloaders(batch_size=64, file_path='data/hn_dataset.pt', split_ratio=0.8)
+train_dataloader, test_dataloader = get_dataloaders(batch_size=64, file_path='data/pi_dataset.pt', split_ratio=0.8)
 
-def calculate_accuracy(predictions, true_outputs, threshold=0.1):
+def calculate_accuracy(predictions, true_outputs, threshold=0.5):
     absolute_errors = torch.abs(predictions - true_outputs)
     accurate_predictions = (absolute_errors <= threshold)
     accuracy = accurate_predictions.float().mean()
     return accuracy
 
 input_size = 1
-hidden_layers = [16, 32, 16] 
+hidden_layers = [100, 100] 
 output_size = 1
 model = SimpleNN(input_size, hidden_layers, output_size)
 
