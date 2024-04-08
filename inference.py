@@ -26,7 +26,7 @@ def step(n):
     return 2 * math.floor(n / 100)
 
 model = SimpleNN(1, hidden_layers, 1)
-model.load_state_dict(torch.load('models/model_sin_100.pth'))
+model.load_state_dict(torch.load('models/model_step_100.pth'))
 model.eval()
 
 n = random.randint(100000, 1000000)

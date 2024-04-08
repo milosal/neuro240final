@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from torch.utils.data import Dataset, DataLoader
 from torch.utils.data.dataset import random_split
 
-FN_USED = "step"
+FN_USED = "rat"
 
 LR = 0.001
 
@@ -128,7 +128,7 @@ plt.plot(range(epochs), test_losses, label='Testing Loss', color='orange')
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
 plt.title(f'{FN_USED} Loss Over Epochs')
-plt.ylim([0, 1.3 * test_losses[4]])  
+plt.ylim([0, 1.3 * train_losses[4]])  
 plt.legend()
 
 plt.subplot(1, 2, 2) 
