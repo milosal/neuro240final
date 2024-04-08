@@ -8,7 +8,7 @@ from torch.utils.data.dataset import random_split
 
 FN_USED = "sin"
 
-LR = 0.003
+LR = 0.001
 
 START_TRAIN = 1
 END_TRAIN = 10000
@@ -77,8 +77,8 @@ optimizer = optim.Adam(model.parameters(), lr=LR)
 epochs = EPOCHS
 test_losses = []
 train_losses = []
-train_accuracies = []
-test_accuracies = []
+train_maes = []
+test_maes = []
 for epoch in range(epochs):
     model.train()
     total_loss = 0
@@ -96,7 +96,7 @@ for epoch in range(epochs):
     avg_train_loss = total_loss / len(train_dataloader)
     avg_train_mae = total_mae / len(train_dataloader) 
     train_losses.append(avg_train_loss)
-    train_accuracies.append(avg_train_mae) 
+    train_maes.append(avg_train_mae) 
 
     #test
     model.eval()
@@ -113,10 +113,10 @@ for epoch in range(epochs):
     avg_test_loss = test_loss / len(test_dataloader)
     avg_test_mae = total_mae / len(test_dataloader)  
     test_losses.append(avg_test_loss)
-    test_accuracies.append(avg_test_mae)
+    test_maes.append(avg_test_mae)
     
     if epoch % PRINT_EVERY == 0:
-        print(f"Epoch {epoch}, Train Loss: {avg_train_loss}, Train MAE: {avg_train_mae}%\nTest Loss: {avg_test_loss}, Test MAE: {avg_test_mae}%")
+        print(f"Epoch {epoch}, Train Loss: {avg_train_loss}, Train MAE: {avg_train_mae}\nTest Loss: {avg_test_loss}, Test MAE: {avg_test_mae}")
 
 save_file_name = f"models/model_{FN_USED}_{EPOCHS}.pth"
 torch.save(model.state_dict(), save_file_name)
@@ -128,17 +128,16 @@ plt.plot(range(epochs), test_losses, label='Testing Loss')
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
 plt.title(f'{FN_USED} Loss Over Epochs')
-plt.ylim([0, 1.3 * train_losses[2]])  
+plt.ylim([0, 1.3 * test_losses[4]])  
 plt.legend()
 
 plt.subplot(1, 2, 2) 
-plt.plot(range(epochs), train_accuracies, label='Training MAE', color='blue')
-plt.plot(range(epochs), test_accuracies, label='Testing MAE', color='orange') 
+plt.plot(range(epochs), train_maes, label='Training MAE', color='blue')
+plt.plot(range(epochs), test_maes, label='Testing MAE', color='orange') 
 plt.xlabel('Epoch')
 plt.ylabel('Mean Absolute Error')
 plt.title(f'{FN_USED} MAE Over Epochs')
+plt.ylim([0, 1.3 * train_maes[3]])
 plt.legend()
-
-plt.show()
 
 plt.show()
