@@ -22,11 +22,11 @@ class SimpleNN(nn.Module):
     def forward(self, x):
         return self.net(x)
     
-def pi(n):
-    return math.pi * n
+def step(n):
+    return 2 * math.floor(n / 100)
 
 model = SimpleNN(1, hidden_layers, 1)
-model.load_state_dict(torch.load('models/model_pi_30.pth'))
+model.load_state_dict(torch.load('models/model_sin_100.pth'))
 model.eval()
 
 n = random.randint(100000, 1000000)
@@ -36,4 +36,4 @@ with torch.no_grad():
     predicted_output = model(input_tensor)
     print(f"Predicted output for input {n}: {predicted_output.item()}")
 
-    print("Real answer: ", pi(n))
+    print("Real answer: ", step(n))

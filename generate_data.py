@@ -1,10 +1,10 @@
 import torch
 import math
 
-FN_NAME = 'sin'
+FN_NAME = 'step'
 
 def sin(n):
-    return math.sin(n)
+    return 2 * math.floor(n / 100)
 
 def gen_dataset(n_max, file_path=f'data/{FN_NAME}_dataset.pt'):
     data = []
