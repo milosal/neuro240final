@@ -58,9 +58,10 @@ def get_dataloaders(batch_size=64, file_path='data/pi_dataset.pt', split_ratio=0
 
 train_dataloader, test_dataloader = get_dataloaders(batch_size=64, file_path='data/pi_dataset.pt', split_ratio=0.8)
 
-def calculate_accuracy(predictions, true_outputs, threshold=0.5):
+def calculate_accuracy(predictions, true_outputs, thresh_percent=0.01):
+    thresh = true_outputs * (thresh_percent / 100)
     absolute_errors = torch.abs(predictions - true_outputs)
-    accurate_predictions = (absolute_errors <= threshold)
+    accurate_predictions = (absolute_errors <= thresh)
     accuracy = accurate_predictions.float().mean()
     return accuracy
 

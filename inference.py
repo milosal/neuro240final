@@ -29,7 +29,7 @@ model = SimpleNN(1, hidden_layers, 1)
 model.load_state_dict(torch.load('models/model_pi_30.pth'))
 model.eval()
 
-n = random.randint(1, 1000)
+n = random.randint(100000, 1000000)
 input_tensor = torch.tensor([n], dtype=torch.float32)
 
 with torch.no_grad():
