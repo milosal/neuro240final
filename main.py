@@ -15,8 +15,8 @@ END_TRAIN = 10000
 START_TEST = 10001
 END_TEST = 12000
 
-EPOCHS = 30
-PRINT_EVERY = 3
+EPOCHS = 100
+PRINT_EVERY = 5
 
 GRAPH_THRESHOLD = 20
 
@@ -93,7 +93,7 @@ for epoch in range(epochs):
         total_accuracy += accuracy.item()
 
     avg_train_loss = total_loss / len(train_dataloader.dataset)
-    avg_train_accuracy = total_accuracy / len(train_dataloader.dataset)
+    avg_train_accuracy = total_accuracy / len(train_dataloader)
     train_losses.append(avg_train_loss)
     train_accuracies.append(avg_train_accuracy)
 
@@ -110,7 +110,7 @@ for epoch in range(epochs):
             total_accuracy += accuracy.item()
 
     avg_test_loss = test_loss / len(test_dataloader.dataset)
-    avg_test_accuracy = total_accuracy / len(test_dataloader.dataset)
+    avg_test_accuracy = total_accuracy / len(test_dataloader)
     test_losses.append(avg_test_loss)
     test_accuracies.append(avg_test_accuracy)
     
@@ -126,7 +126,7 @@ plt.plot(range(epochs), train_losses, label='Training Loss')
 plt.plot(range(epochs), test_losses, label='Testing Loss')
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
-plt.title('Training and Test Loss Over Epochs')
+plt.title(f'{FN_USED} Loss Over Epochs')
 plt.ylim([0, 1.3 * train_losses[2]])  
 plt.legend()
 
@@ -135,7 +135,7 @@ plt.plot(range(epochs), train_accuracies, label='Training Accuracy', color='blue
 plt.plot(range(epochs), test_accuracies, label='Testing Accuracy', color='orange')
 plt.xlabel('Epoch')
 plt.ylabel('Accuracy')
-plt.title('Training and Test Accuracy Over Epochs')
+plt.title(f'{FN_USED} Accuracy Over Epochs')
 plt.ylim([0, 1]) 
 plt.legend()
 

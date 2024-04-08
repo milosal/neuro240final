@@ -5,6 +5,7 @@ from hfunction import H
 from dfunction import D
 import matplotlib.pyplot as plt
 import random
+import math
 
 hidden_layers = [100, 100]
 
@@ -20,9 +21,12 @@ class SimpleNN(nn.Module):
         
     def forward(self, x):
         return self.net(x)
+    
+def pi(n):
+    return math.pi * n
 
 model = SimpleNN(1, hidden_layers, 1)
-model.load_state_dict(torch.load('models/model_4_25.pth'))
+model.load_state_dict(torch.load('models/model_pi_30.pth'))
 model.eval()
 
 n = random.randint(1, 1000)
@@ -32,4 +36,4 @@ with torch.no_grad():
     predicted_output = model(input_tensor)
     print(f"Predicted output for input {n}: {predicted_output.item()}")
 
-    print("Real answer: ", H(n))
+    print("Real answer: ", pi(n))
