@@ -6,15 +6,17 @@ import matplotlib.pyplot as plt
 from torch.utils.data import Dataset, DataLoader
 from torch.utils.data.dataset import random_split
 
-LR = 0.005
+FN_USED = "pi"
+
+LR = 0.003
 
 START_TRAIN = 1
 END_TRAIN = 10000
 START_TEST = 10001
 END_TEST = 12000
 
-EPOCHS = 40
-PRINT_EVERY = 5
+EPOCHS = 30
+PRINT_EVERY = 3
 
 GRAPH_THRESHOLD = 20
 
@@ -91,7 +93,7 @@ for epoch in range(epochs):
         total_accuracy += accuracy.item()
 
     avg_train_loss = total_loss / len(train_dataloader.dataset)
-    avg_train_accuracy = total_accuracy / len(train_dataloader)
+    avg_train_accuracy = total_accuracy / len(train_dataloader.dataset)
     train_losses.append(avg_train_loss)
     train_accuracies.append(avg_train_accuracy)
 
@@ -108,38 +110,33 @@ for epoch in range(epochs):
             total_accuracy += accuracy.item()
 
     avg_test_loss = test_loss / len(test_dataloader.dataset)
-    avg_test_accuracy = total_accuracy / len(test_dataloader)
+    avg_test_accuracy = total_accuracy / len(test_dataloader.dataset)
     test_losses.append(avg_test_loss)
     test_accuracies.append(avg_test_accuracy)
     
     if epoch % PRINT_EVERY == 0:
         print(f"Epoch {epoch}, Train Loss: {avg_train_loss}, Train Accuracy: {avg_train_accuracy*100}%\nTest Loss: {avg_test_loss}, Test Accuracy: {avg_test_accuracy*100}%")
 
-# Saving model state
-save_file_name = f"models/model_{len(hidden_layers)}_{EPOCHS}.pth"
+save_file_name = f"models/model_{FN_USED}_{EPOCHS}.pth"
 torch.save(model.state_dict(), save_file_name)
 
-# Plotting training and testing losses
-plt.figure(figsize=(20, 6))  # Adjust the figure size as needed
-
-# Plotting training and testing losses
-plt.subplot(1, 2, 1)  # 1 row, 2 columns, plot 1
+plt.figure(figsize=(20, 6)) 
+plt.subplot(1, 2, 1)  
 plt.plot(range(epochs), train_losses, label='Training Loss')
 plt.plot(range(epochs), test_losses, label='Testing Loss')
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
 plt.title('Training and Test Loss Over Epochs')
-plt.ylim([0, GRAPH_THRESHOLD])  # Adjust this as needed
+plt.ylim([0, 1.3 * train_losses[2]])  
 plt.legend()
 
-# Plotting training and testing accuracies
 plt.subplot(1, 2, 2) 
 plt.plot(range(epochs), train_accuracies, label='Training Accuracy', color='blue')
 plt.plot(range(epochs), test_accuracies, label='Testing Accuracy', color='orange')
 plt.xlabel('Epoch')
 plt.ylabel('Accuracy')
 plt.title('Training and Test Accuracy Over Epochs')
-plt.ylim([0, 100]) 
+plt.ylim([0, 1]) 
 plt.legend()
 
 plt.show()

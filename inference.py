@@ -6,7 +6,7 @@ from dfunction import D
 import matplotlib.pyplot as plt
 import random
 
-hidden_layers = [64, 256, 256, 64]
+hidden_layers = [100, 100]
 
 class SimpleNN(nn.Module):
     def __init__(self, input_size, hidden_layers, output_size):
