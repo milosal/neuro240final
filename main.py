@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from torch.utils.data import Dataset, DataLoader
 from torch.utils.data.dataset import random_split
 
-FN_USED = "pi"
+FN_USED = "sin"
 
 LR = 0.003
 
@@ -82,7 +82,7 @@ test_accuracies = []
 for epoch in range(epochs):
     model.train()
     total_loss = 0
-    total_accuracy = 0
+    total_mae = 0  # Mean Absolute Error
     for inputs, true_outputs in train_dataloader:
         optimizer.zero_grad()
         predicted_outputs = model(inputs)
@@ -90,33 +90,33 @@ for epoch in range(epochs):
         loss.backward()
         optimizer.step()
         total_loss += loss.item()
-        accuracy = calculate_accuracy(predicted_outputs, true_outputs)
-        total_accuracy += accuracy.item()
+        mae = torch.abs(predicted_outputs - true_outputs).mean() 
+        total_mae += mae.item()
 
-    avg_train_loss = total_loss / len(train_dataloader.dataset)
-    avg_train_accuracy = total_accuracy / len(train_dataloader)
+    avg_train_loss = total_loss / len(train_dataloader)
+    avg_train_mae = total_mae / len(train_dataloader) 
     train_losses.append(avg_train_loss)
-    train_accuracies.append(avg_train_accuracy)
+    train_accuracies.append(avg_train_mae) 
 
     #test
     model.eval()
     test_loss = 0
-    total_accuracy = 0
+    total_mae = 0
     with torch.no_grad():
         for inputs, true_outputs in test_dataloader:
             predicted_outputs = model(inputs)
             loss = criterion(predicted_outputs, true_outputs)
             test_loss += loss.item()
-            accuracy = calculate_accuracy(predicted_outputs, true_outputs)
-            total_accuracy += accuracy.item()
+            mae = torch.abs(predicted_outputs - true_outputs).mean()
+            total_mae += mae.item()
 
-    avg_test_loss = test_loss / len(test_dataloader.dataset)
-    avg_test_accuracy = total_accuracy / len(test_dataloader)
+    avg_test_loss = test_loss / len(test_dataloader)
+    avg_test_mae = total_mae / len(test_dataloader)  
     test_losses.append(avg_test_loss)
-    test_accuracies.append(avg_test_accuracy)
+    test_accuracies.append(avg_test_mae)
     
     if epoch % PRINT_EVERY == 0:
-        print(f"Epoch {epoch}, Train Loss: {avg_train_loss}, Train Accuracy: {avg_train_accuracy*100}%\nTest Loss: {avg_test_loss}, Test Accuracy: {avg_test_accuracy*100}%")
+        print(f"Epoch {epoch}, Train Loss: {avg_train_loss}, Train MAE: {avg_train_mae}%\nTest Loss: {avg_test_loss}, Test MAE: {avg_test_mae}%")
 
 save_file_name = f"models/model_{FN_USED}_{EPOCHS}.pth"
 torch.save(model.state_dict(), save_file_name)
@@ -132,12 +132,13 @@ plt.ylim([0, 1.3 * train_losses[2]])
 plt.legend()
 
 plt.subplot(1, 2, 2) 
-plt.plot(range(epochs), train_accuracies, label='Training Accuracy', color='blue')
-plt.plot(range(epochs), test_accuracies, label='Testing Accuracy', color='orange')
+plt.plot(range(epochs), train_accuracies, label='Training MAE', color='blue')
+plt.plot(range(epochs), test_accuracies, label='Testing MAE', color='orange') 
 plt.xlabel('Epoch')
-plt.ylabel('Accuracy')
-plt.title(f'{FN_USED} Accuracy Over Epochs')
-plt.ylim([0, 1]) 
+plt.ylabel('Mean Absolute Error')
+plt.title(f'{FN_USED} MAE Over Epochs')
 plt.legend()
+
+plt.show()
 
 plt.show()
