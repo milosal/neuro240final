@@ -1,15 +1,17 @@
 import torch
 import math
 
-def pi(n):
-    return math.pi * n
+FN_NAME = 'sin'
 
-def gen_dataset(n_max, file_path='data/pi_dataset.pt'):
+def sin(n):
+    return math.sin(n)
+
+def gen_dataset(n_max, file_path=f'data/{FN_NAME}_dataset.pt'):
     data = []
     for n in range(1, n_max + 1):
-        pn = pi(n)
-        data.append((n, pn))
+        fn = sin(n)
+        data.append((n, fn))
     torch.save(data, file_path)
 
 n_max = 1000000
-gen_dataset(n_max, 'data/pi_dataset.pt')
+gen_dataset(n_max, f'data/{FN_NAME}_dataset.pt')

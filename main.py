@@ -45,7 +45,7 @@ class HnDataset(Dataset):
         n, hn = self.data[idx]
         return torch.tensor([n], dtype=torch.float32), torch.tensor([hn], dtype=torch.float32)
 
-def get_dataloaders(batch_size=64, file_path='data/pi_dataset.pt', split_ratio=0.8):
+def get_dataloaders(batch_size=64, file_path=f'data/{FN_USED}_dataset.pt', split_ratio=0.8):
     dataset = HnDataset(file_path=file_path)
     train_size = int(len(dataset) * split_ratio)
     test_size = len(dataset) - train_size
@@ -56,7 +56,7 @@ def get_dataloaders(batch_size=64, file_path='data/pi_dataset.pt', split_ratio=0
     
     return train_dataloader, test_dataloader
 
-train_dataloader, test_dataloader = get_dataloaders(batch_size=64, file_path='data/pi_dataset.pt', split_ratio=0.8)
+train_dataloader, test_dataloader = get_dataloaders(batch_size=64, file_path=f'data/{FN_USED}_dataset.pt', split_ratio=0.8)
 
 def calculate_accuracy(predictions, true_outputs, thresh_percent=0.01):
     thresh = true_outputs * (thresh_percent / 100)
@@ -98,7 +98,7 @@ for epoch in range(epochs):
     train_losses.append(avg_train_loss)
     train_accuracies.append(avg_train_accuracy)
 
-    # Test the model every epoch
+    #test
     model.eval()
     test_loss = 0
     total_accuracy = 0
