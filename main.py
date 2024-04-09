@@ -118,7 +118,7 @@ for epoch in range(epochs):
     if epoch % PRINT_EVERY == 0:
         print(f"Epoch {epoch}, Train Loss: {avg_train_loss}, Train MAE: {avg_train_mae}\nTest Loss: {avg_test_loss}, Test MAE: {avg_test_mae}")
 
-save_file_name = f"models/model__{len(hidden_layers))}_{FN_USED}_{EPOCHS}.pth"
+save_file_name = f"models/model__{len(hidden_layers)}_{FN_USED}_{EPOCHS}.pth"
 torch.save(model.state_dict(), save_file_name)
 
 plt.figure(figsize=(20, 6)) 
