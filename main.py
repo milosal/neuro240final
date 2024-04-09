@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from torch.utils.data import Dataset, DataLoader
 from torch.utils.data.dataset import random_split
 
-FN_USED = "pointil"
+FN_USED = "rat"
 
 LR = 0.001
 
@@ -66,7 +66,7 @@ def calculate_accuracy(predictions, true_outputs, thresh_percent=0.01):
     return accuracy
 
 input_size = 1
-hidden_layers = [100, 100] 
+hidden_layers = [100, 100, 100] 
 output_size = 1
 model = SimpleNN(input_size, hidden_layers, output_size)
 
