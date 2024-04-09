@@ -1,16 +1,18 @@
 import torch
 import math
 
-FN_NAME = 'rat'
+FN_NAME = 'pointil'
 
-def rat(n):
-
-    return (pow(n, 3) / 2) / (pow(n, 2) - 1000001)
+def pointil(n):
+    if n % 240 == 0:
+        return 1
+    else:
+        return 0
 
 def gen_dataset(n_max, file_path=f'data/{FN_NAME}_dataset.pt'):
     data = []
     for n in range(1, n_max + 1):
-        fn = rat(n)
+        fn = pointil(n)
         data.append((n, fn))
     torch.save(data, file_path)
 
