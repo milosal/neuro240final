@@ -82,7 +82,7 @@ test_maes = []
 for epoch in range(epochs):
     model.train()
     total_loss = 0
-    total_mae = 0  # Mean Absolute Error
+    total_mae = 0 
     for inputs, true_outputs in train_dataloader:
         optimizer.zero_grad()
         predicted_outputs = model(inputs)

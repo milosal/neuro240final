@@ -34,9 +34,15 @@ def pi(n):
 def rat(n):
     return (pow(n, 3) / 2) / (pow(n, 2) - 1000001)
 
+def pointil(n):
+    if n % 240 == 0:
+        return 1
+    else:
+        return 0
+
 
 model = SimpleNN(1, hidden_layers, 1)
-model.load_state_dict(torch.load('models/model_rat_100.pth'))
+model.load_state_dict(torch.load('models/model_pointil_100.pth'))
 model.eval()
 
 inputs = torch.tensor([[n] for n in range(1, 100001, 3333)], dtype=torch.float32)
@@ -47,7 +53,7 @@ with torch.no_grad():
     for input_tensor in inputs:
         predicted_output = model(input_tensor)
         predicted_outputs.append(predicted_output.item())
-        actual_outputs.append(sin(input_tensor.item()))
+        actual_outputs.append(pointil(input_tensor.item()))
 
 plt.figure(figsize=(10, 5))
 
@@ -62,12 +68,12 @@ plt.legend()
 plt.show()
 
 '''
-n = random.randint(100000, 1000000)
+n = random.randint(240, 240)
 input_tensor = torch.tensor([n], dtype=torch.float32)
 
 with torch.no_grad():
     predicted_output = model(input_tensor)
     print(f"Predicted output for input {n}: {predicted_output.item()}")
 
-    print("Real answer: ", step(n))
+    print("Real answer: ", pointil(n))
 '''
