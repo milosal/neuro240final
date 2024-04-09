@@ -6,9 +6,9 @@ import matplotlib.pyplot as plt
 from torch.utils.data import Dataset, DataLoader
 from torch.utils.data.dataset import random_split
 
-FN_USED = "rat"
+FN_USED = "sin"
 
-LR = 0.001
+LR = 0.01
 
 START_TRAIN = 1
 END_TRAIN = 10000
@@ -118,7 +118,7 @@ for epoch in range(epochs):
     if epoch % PRINT_EVERY == 0:
         print(f"Epoch {epoch}, Train Loss: {avg_train_loss}, Train MAE: {avg_train_mae}\nTest Loss: {avg_test_loss}, Test MAE: {avg_test_mae}")
 
-save_file_name = f"models/model_{FN_USED}_{EPOCHS}.pth"
+save_file_name = f"models/model__{len(hidden_layers))}_{FN_USED}_{EPOCHS}.pth"
 torch.save(model.state_dict(), save_file_name)
 
 plt.figure(figsize=(20, 6)) 
