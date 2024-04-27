@@ -1,4 +1,6 @@
 import torch
+import math
+import numpy as np
 import torch.nn as nn
 import torch.optim as optim
 from dfunction import D
@@ -6,17 +8,18 @@ import matplotlib.pyplot as plt
 from torch.utils.data import Dataset, DataLoader
 from torch.utils.data.dataset import random_split
 
-FN_USED = "normed_sin"
+FN_USED = "continuous_sin"
 
-LR = 0.0001
+LR = 0.001
 
 START_TRAIN = 1
 END_TRAIN = 10000
 START_TEST = 10001
 END_TEST = 12000
 
-EPOCHS = 20
-PRINT_EVERY = 2
+EPOCHS = 5
+PRINT_EVERY = 1
+PRINTS_PER_EPOCH = 4
 
 GRAPH_THRESHOLD = 20
 
@@ -66,7 +69,7 @@ def calculate_accuracy(predictions, true_outputs, thresh_percent=0.01):
     return accuracy
 
 input_size = 1
-hidden_layers = [100, 512, 512, 100] 
+hidden_layers = [100, 100, 100] 
 output_size = 1
 model = SimpleNN(input_size, hidden_layers, output_size)
 
@@ -74,15 +77,20 @@ criterion = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr=LR)
 
 
+
 epochs = EPOCHS
 test_losses = []
 train_losses = []
 train_maes = []
 test_maes = []
+log_interval = math.ceil(len(train_dataloader) / PRINTS_PER_EPOCH)
+
 for epoch in range(epochs):
     model.train()
     total_loss = 0
-    total_mae = 0 
+    total_mae = 0
+    batch_count = 0
+
     for inputs, true_outputs in train_dataloader:
         optimizer.zero_grad()
         predicted_outputs = model(inputs)
@@ -92,52 +100,52 @@ for epoch in range(epochs):
         total_loss += loss.item()
         mae = torch.abs(predicted_outputs - true_outputs).mean() 
         total_mae += mae.item()
+        batch_count += 1
 
-    avg_train_loss = total_loss / len(train_dataloader)
-    avg_train_mae = total_mae / len(train_dataloader) 
-    train_losses.append(avg_train_loss)
-    train_maes.append(avg_train_mae) 
-
-    #test
-    model.eval()
-    test_loss = 0
-    total_mae = 0
-    with torch.no_grad():
-        for inputs, true_outputs in test_dataloader:
-            predicted_outputs = model(inputs)
-            loss = criterion(predicted_outputs, true_outputs)
-            test_loss += loss.item()
-            mae = torch.abs(predicted_outputs - true_outputs).mean()
-            total_mae += mae.item()
-
-    avg_test_loss = test_loss / len(test_dataloader)
-    avg_test_mae = total_mae / len(test_dataloader)  
-    test_losses.append(avg_test_loss)
-    test_maes.append(avg_test_mae)
-    
-    if epoch % PRINT_EVERY == 0:
-        print(f"Epoch {epoch}, Train Loss: {avg_train_loss}, Train MAE: {avg_train_mae}\nTest Loss: {avg_test_loss}, Test MAE: {avg_test_mae}")
+        
+        if batch_count % log_interval == 0 or batch_count == len(train_dataloader):
+            avg_train_loss = round(total_loss / batch_count, 8)
+            avg_train_mae = round(total_mae / batch_count, 8)
+            train_losses.append(avg_train_loss)
+            train_maes.append(avg_train_mae)
+            
+            model.eval()
+            test_loss = 0
+            test_mae = 0
+            with torch.no_grad():
+                for test_inputs, test_true_outputs in test_dataloader:
+                    test_outputs = model(test_inputs)
+                    test_loss += criterion(test_outputs, test_true_outputs).item()
+                    test_mae += torch.abs(test_outputs - test_true_outputs).mean().item()
+            avg_test_loss = round(test_loss / len(test_dataloader), 8)
+            avg_test_mae = round(test_mae / len(test_dataloader), 8)
+            test_losses.append(avg_test_loss)
+            test_maes.append(avg_test_mae)
+            print(f"After {batch_count/len(train_dataloader)*100:.2f}% of epoch {epoch}, Train Loss: {avg_train_loss}, Train MAE: {avg_train_mae}, Test Loss: {avg_test_loss}, Test MAE: {avg_test_mae}")
 
 save_file_name = f"models/model__{len(hidden_layers)}_{FN_USED}_{EPOCHS}.pth"
 torch.save(model.state_dict(), save_file_name)
 
 plt.figure(figsize=(20, 6)) 
 plt.subplot(1, 2, 1)  
-plt.plot(range(epochs), train_losses, label='Training Loss', color='blue')
-plt.plot(range(epochs), test_losses, label='Testing Loss', color='orange')
+
+x_axis = np.linspace(0, epochs, num=len(train_losses))
+
+plt.plot(x_axis, train_losses, label='Training Loss', color='blue')
+plt.plot(x_axis, test_losses, label='Testing Loss', color='orange')
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
 plt.title(f'{FN_USED} Loss Over Epochs')
-plt.ylim([0, 1.3 * train_losses[4]])  
+plt.ylim([0, 1.1 * max(train_losses)])  
 plt.legend()
 
 plt.subplot(1, 2, 2) 
-plt.plot(range(epochs), train_maes, label='Training MAE', color='blue')
-plt.plot(range(epochs), test_maes, label='Testing MAE', color='orange') 
+plt.plot(x_axis, train_maes, label='Training MAE', color='blue')
+plt.plot(x_axis, test_maes, label='Testing MAE', color='orange') 
 plt.xlabel('Epoch')
 plt.ylabel('Mean Absolute Error')
 plt.title(f'{FN_USED} MAE Over Epochs')
-plt.ylim([0, 1.3 * train_maes[3]])
+plt.ylim([0, 1.1 * max(train_maes)])  
 plt.legend()
 
 plt.show()
