@@ -6,17 +6,17 @@ import matplotlib.pyplot as plt
 from torch.utils.data import Dataset, DataLoader
 from torch.utils.data.dataset import random_split
 
-FN_USED = "sin"
+FN_USED = "normed_sin"
 
-LR = 0.01
+LR = 0.0001
 
 START_TRAIN = 1
 END_TRAIN = 10000
 START_TEST = 10001
 END_TEST = 12000
 
-EPOCHS = 100
-PRINT_EVERY = 5
+EPOCHS = 20
+PRINT_EVERY = 2
 
 GRAPH_THRESHOLD = 20
 
@@ -66,7 +66,7 @@ def calculate_accuracy(predictions, true_outputs, thresh_percent=0.01):
     return accuracy
 
 input_size = 1
-hidden_layers = [100, 100, 100] 
+hidden_layers = [100, 512, 512, 100] 
 output_size = 1
 model = SimpleNN(input_size, hidden_layers, output_size)
 
