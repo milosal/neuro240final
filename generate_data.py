@@ -6,7 +6,7 @@ import math
 # normed_hn is normed_h_n(x) = hn(1000000x)
 # normed_sin is normed_sin(x) = sin(1000000x)
 
-FN_NAME = 'normed_sin'
+FN_NAME = 'continuous_pointil'
 
 def sin(x):
     return math.sin(x)

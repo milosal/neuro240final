@@ -2,7 +2,7 @@ import torch
 import math
 
 
-FN_NAME = 'continuous_sin'
+FN_NAME = 'continuous_log_gamma'
 
 def sin(x):
     return math.sin(x)
@@ -24,13 +24,13 @@ def div_binom(n):
     else:
         return ((2 * n)**2 + 3*n - 10) / math.comb(n, 2)
     
+def continuous_pointil(x):
+    if (-2.424 <= x <= -2.24) or (2.24 <= x <= 2.424):
+        return 1
+    return 0
 
-def gen_dataset(n_max, file_path=f'data/{FN_NAME}_dataset.pt'):
-    data = []
-    for n in range(1, n_max + 1):
-        fn = div_binom(n)
-        data.append((n, fn))
-    torch.save(data, file_path)
+def log_gamma(x):
+    return math.log(math.gamma(x))
 
 def gen_dataset_continuous(start, end, n_max, file_path=f'data/{FN_NAME}_dataset.pt'):
     data = []
@@ -41,12 +41,12 @@ def gen_dataset_continuous(start, end, n_max, file_path=f'data/{FN_NAME}_dataset
         inputs.append(i)
         i += step_size
     for x in inputs:
-        fx = sin(x)
+        fx = continuous_pointil(x)
         data.append((x, fx))
     torch.save(data, file_path)
 
 n_max = 1000000
-start = -10
+start = 0.2
 end = 10
 gen_dataset_continuous(start, end, n_max, f'data/{FN_NAME}_dataset.pt')
 #gen_dataset(n_max, f'data/{FN_NAME}_dataset.pt')
