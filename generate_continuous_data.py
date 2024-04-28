@@ -2,7 +2,7 @@ import torch
 import math
 
 
-FN_NAME = 'continuous_log_gamma'
+FN_NAME = 'continuous_weierstrass'
 
 def sin(x):
     return math.sin(x)
@@ -32,6 +32,13 @@ def continuous_pointil(x):
 def log_gamma(x):
     return math.log(math.gamma(x))
 
+def weier(x):
+    #sum_{n}^{infty}(a^n * cos(b^n\pi x))
+    count = 0
+    for i in range(1, 101):
+        count += (0.5 ** i) * math.cos(4 ** i * math.pi * x)
+    return count
+
 def gen_dataset_continuous(start, end, n_max, file_path=f'data/{FN_NAME}_dataset.pt'):
     data = []
     inputs = []
@@ -41,12 +48,12 @@ def gen_dataset_continuous(start, end, n_max, file_path=f'data/{FN_NAME}_dataset
         inputs.append(i)
         i += step_size
     for x in inputs:
-        fx = continuous_pointil(x)
+        fx = weier(x)
         data.append((x, fx))
     torch.save(data, file_path)
 
 n_max = 1000000
-start = 0.2
+start = -10
 end = 10
 gen_dataset_continuous(start, end, n_max, f'data/{FN_NAME}_dataset.pt')
 #gen_dataset(n_max, f'data/{FN_NAME}_dataset.pt')

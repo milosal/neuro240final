@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from torch.utils.data import Dataset, DataLoader
 from torch.utils.data.dataset import random_split
 
-FN_USED = "continuous_log_gamma"
+FN_USED = "continuous_weierstrass"
 
 LR = 0.001
 
