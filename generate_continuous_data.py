@@ -2,7 +2,7 @@ import torch
 import math
 
 
-FN_NAME = 'continuous_weierstrass'
+FN_NAME = 'continuous_sawtooth'
 
 def sin(x):
     return math.sin(x)
@@ -39,6 +39,12 @@ def weier(x):
         count += (0.5 ** i) * math.cos(4 ** i * math.pi * x)
     return count
 
+def sawtooth(x):
+    count = 0
+    for i in range(1, 101):
+        count += ((-1)**(i + 1) / i) * math.sin(i * x)
+    return count
+
 def gen_dataset_continuous(start, end, n_max, file_path=f'data/{FN_NAME}_dataset.pt'):
     data = []
     inputs = []
@@ -48,7 +54,7 @@ def gen_dataset_continuous(start, end, n_max, file_path=f'data/{FN_NAME}_dataset
         inputs.append(i)
         i += step_size
     for x in inputs:
-        fx = weier(x)
+        fx = sawtooth(x)
         data.append((x, fx))
     torch.save(data, file_path)
 

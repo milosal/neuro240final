@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from torch.utils.data import Dataset, DataLoader
 from torch.utils.data.dataset import random_split
 
-FN_USED = "continuous_weierstrass"
+FN_USED = "continuous_sawtooth"
 
 LR = 0.001
 
@@ -17,7 +17,7 @@ END_TRAIN = 10000
 START_TEST = 10001
 END_TEST = 12000
 
-EPOCHS = 15
+EPOCHS = 25
 PRINT_EVERY = 1
 PRINTS_PER_EPOCH = 2
 
