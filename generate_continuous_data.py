@@ -1,8 +1,9 @@
 import torch
 import math
+import numpy as np
 
 
-FN_NAME = 'continuous_sawtooth'
+FN_NAME = 'continuous_sin184'
 
 def sin(x):
     return math.sin(x)
@@ -45,6 +46,26 @@ def sawtooth(x):
         count += ((-1)**(i + 1) / i) * math.sin(i * x)
     return count
 
+def bessel(x):
+    count = 0
+    for i in range(1, 101):
+        count += ((-1)**i) / (math.gamma(i)*math.gamma(i+3)) * (x/2)**(2*i +2)
+    return count
+
+def dedekind_eta(tau): #continuous_dede
+    q = np.exp(2j * np.pi * tau)
+    eta = q**(1/24) * np.product([1 - q**n for n in range(1, 100)])
+    return eta.real
+
+def sin2(x):
+    return math.sin((x)**2)
+
+def sin184(x):
+    return math.sin((pow(x, 1.84)).real)
+
+def sin16(x):
+    return math.sin(pow(x,1.6))
+
 def gen_dataset_continuous(start, end, n_max, file_path=f'data/{FN_NAME}_dataset.pt'):
     data = []
     inputs = []
@@ -54,7 +75,7 @@ def gen_dataset_continuous(start, end, n_max, file_path=f'data/{FN_NAME}_dataset
         inputs.append(i)
         i += step_size
     for x in inputs:
-        fx = sawtooth(x)
+        fx = sin184(x)
         data.append((x, fx))
     torch.save(data, file_path)
 
