@@ -3,7 +3,7 @@ import math
 import numpy as np
 
 
-FN_NAME = 'continuous_sin184'
+FN_NAME = 'wonky_hn'
 
 def sin(x):
     return math.sin(x)
@@ -66,6 +66,11 @@ def sin184(x):
 def sin16(x):
     return math.sin(pow(x,1.6))
 
+def wonky_hn(x):
+    t1 = (4 * x + 1) / 4
+    t2 = ((2 * x + 1) / 4) * math.cos(math.pi * x)
+    return t1 - t2
+
 def gen_dataset_continuous(start, end, n_max, file_path=f'data/{FN_NAME}_dataset.pt'):
     data = []
     inputs = []
@@ -75,12 +80,12 @@ def gen_dataset_continuous(start, end, n_max, file_path=f'data/{FN_NAME}_dataset
         inputs.append(i)
         i += step_size
     for x in inputs:
-        fx = sin184(x)
+        fx = wonky_hn(x)
         data.append((x, fx))
     torch.save(data, file_path)
 
 n_max = 1000000
-start = -10
-end = 10
+start = 0
+end = 100
 gen_dataset_continuous(start, end, n_max, f'data/{FN_NAME}_dataset.pt')
 #gen_dataset(n_max, f'data/{FN_NAME}_dataset.pt')
