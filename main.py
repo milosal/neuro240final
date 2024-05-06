@@ -13,7 +13,7 @@ END_TRAIN = 10000
 START_TEST = 10001
 END_TEST = 12000
 
-EPOCHS = 400
+EPOCHS = 100
 PRINT_EVERY = 10
 
 GRAPH_THRESHOLD = 200
@@ -74,7 +74,7 @@ def calculate_accuracy(predictions, true_outputs, threshold=0.1):
     return accuracy
 
 input_size = 1
-hidden_layers = [16, 32, 16] 
+hidden_layers = [100, 100, 100] 
 output_size = 1
 model = SimpleNN(input_size, hidden_layers, output_size)
 

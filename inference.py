@@ -5,8 +5,9 @@ from hfunction import H
 from dfunction import D
 import matplotlib.pyplot as plt
 import random
+import math
 
-hidden_layers = [64, 256, 256, 64]
+hidden_layers = [100, 100, 100]
 
 class SimpleNN(nn.Module):
     def __init__(self, input_size, hidden_layers, output_size):
@@ -22,7 +23,7 @@ class SimpleNN(nn.Module):
         return self.net(x)
 
 model = SimpleNN(1, hidden_layers, 1)
-model.load_state_dict(torch.load('models/model_4_25.pth'))
+model.load_state_dict(torch.load('models/model_3_100.pth'))
 model.eval()
 
 n = random.randint(1, 1000)
@@ -33,3 +34,12 @@ with torch.no_grad():
     print(f"Predicted output for input {n}: {predicted_output.item()}")
 
     print("Real answer: ", H(n))
+
+file = torch.load('data/hn_dataset.pt')
+count = 0
+seen = 0
+for n, hn in file:
+    count += hn
+    seen += 1
+
+print(count / seen)
