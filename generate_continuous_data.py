@@ -3,10 +3,16 @@ import math
 import numpy as np
 
 
-FN_NAME = 'wonky_hn'
+FN_NAME = 'wonky50'
 
 def sin(x):
     return math.sin(x)
+
+def shoe_gamma(x):
+    return log_gamma(x) / 1000
+
+def shoe_sin(x):
+    return math.sin(x) / 100
 
 def hn(n):
     curr = n
@@ -57,6 +63,12 @@ def dedekind_eta(tau): #continuous_dede
     eta = q**(1/24) * np.product([1 - q**n for n in range(1, 100)])
     return eta.real
 
+def kay(x):
+    if x >= 0:
+        return (- x) / 2 - math.sin(x)
+    else:
+        return (- x) * 2 + 1
+
 def sin2(x):
     return math.sin((x)**2)
 
@@ -86,6 +98,6 @@ def gen_dataset_continuous(start, end, n_max, file_path=f'data/{FN_NAME}_dataset
 
 n_max = 1000000
 start = 0
-end = 100
+end = 50
 gen_dataset_continuous(start, end, n_max, f'data/{FN_NAME}_dataset.pt')
 #gen_dataset(n_max, f'data/{FN_NAME}_dataset.pt')

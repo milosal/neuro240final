@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from torch.utils.data import Dataset, DataLoader
 from torch.utils.data.dataset import random_split
 
-FN_USED = "wonky_hn"
+FN_USED = "wonky50"
 
 LR = 0.001
 
